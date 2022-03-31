@@ -1,0 +1,32 @@
+{
+  "name": "heybear",
+  "version": "1.0.0",
+  "description": "chat app using sockets.io. name comes from a youtube channel that my daughter liked.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "chat",
+    "real"
+  ],
+  "author": "c4lyp5o",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-rate-limit": "^6.3.0",
+    "http": "^0.0.1-security",
+    "mongoose": "^6.2.9",
+    "nodemon": "^2.0.15",
+    "pug": "^3.0.2",
+    "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}

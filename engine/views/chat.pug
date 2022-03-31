@@ -1,0 +1,43 @@
+doctype html
+head
+script(src="/js/jquery.js")
+script(src='/js/socket.io.js')
+.container
+  br
+  .jumbotron
+    h1.display-4 Send Message
+    br
+    input#name.form-control(placeholder='Name')
+    br
+    br
+    textarea#message.form-control(placeholder='Your Message Here')
+    br
+    br
+    button#send.btn.btn-success Send
+  #messages
+
+script.
+  $(() => {
+    $("#send").click(()=>{
+       sendMessage({
+          name: $("#name").val(), 
+          message:$("#message").val()});
+        })
+      getMessages()
+    })
+    
+    function addMessages(message){
+    $('#messages').append(`
+        <h4> ${message.name} </h4>
+        <p>  ${message.message} </p>`)
+    }
+    
+    function getMessages(){
+    $.get('/messages', (data) => {
+    data.forEach(addMessages);
+    })
+    }
+    
+    function sendMessage(message){
+    $.post('/messages', message)
+    }
