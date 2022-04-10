@@ -1,7 +1,13 @@
+// calling friends
 const http = require('http');
 const app = require('./engine/heybear');
 require('dotenv').config();
 
+// init analytics
+let usercount = 1;
+let userlist = [];
+
+// init port
 function normalizePort(val) {
     const port = parseInt(val, 10);
 
@@ -18,6 +24,7 @@ function normalizePort(val) {
 
 const port = normalizePort( process.env.PORT || '8000');
 
+// error handler
 function errorHandler(error) {
     if (error.syscall !== 'listen') {
         throw error;
@@ -38,26 +45,8 @@ function errorHandler(error) {
     }
 }
 
+// configure server
 const server = http.createServer(app);
-const io = require('socket.io')(server);
-
-io.on('connection', (socket) => {
-    console.log('new user connected');
-    
-    socket.on('joining msg', (username) => {
-        socket.nickname = username;
-        io.emit('chat message', `---${socket.nickname} joined the chat---`);
-    });
-    
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-      io.emit('chat message', `---${socket.nickname} left the chat---`);
-      
-    });
-    socket.on('chat message', (msg) => {
-      socket.broadcast.emit('chat message', msg);         //sending message to all except the sender
-    });
-  });
 
 server.on('error', errorHandler);
 server.on('listening', () => {
@@ -66,4 +55,38 @@ server.on('listening', () => {
     console.log(`Currently istening on ${bind}. Lessgo!`);
 });
 
+// configure socket.io
+const io = require('socket.io')(server);
+
+io.on('connection', (socket) => {
+    console.log('new user connected');
+
+    socket.on('joining msg', (username) => {
+        username = "Anon" + usercount;
+        socket.nickname = username;
+        userlist.push(username);
+        usercount++;
+        io.emit('chat message', `---${socket.nickname} joined the chat---`);
+        io.emit('chat message', `There are ${usercount} users in the chat`);
+        io.emit('chat message', `Users: ${userlist}`);  
+    });
+    
+    socket.on('disconnect', () => {
+        if (!socket.nickname) return;
+        userlist.splice(userlist.indexOf(socket.nickname), 1);
+        usercount--;
+        console.log('user disconnected');
+        io.emit('chat message', `---${socket.nickname} left the chat---`);    
+    });
+
+    socket.on('chat message', (msg) => {
+        socket.broadcast.emit('chat message', msg);
+    });
+
+    socket.on('typing', () => {
+        socket.broadcast.emit(`${socket.nickname} is typing...`);
+    });
+});
+
+ // engines up
 server.listen(port);
