@@ -1,5 +1,8 @@
 exports.theHome = async (req, res) => {
-    res.render('chat', { title: 'HeyBear' });
+    res.write('This is the websockets server for waktusolat.me');
+    res.write('\nMore info: www.waktusolat.me');
+    res.write('\nContact us: https://github.com/c4lyp5o')
+    res.end();
 }
 
 // exports.getMessage = async (req, res) => {
