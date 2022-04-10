@@ -56,7 +56,11 @@ server.on('listening', () => {
 });
 
 // configure socket.io
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+    cors: {
+      origin: "*",
+    },
+  });
 
 io.on('connection', (socket) => {
     console.log('new user connected');
