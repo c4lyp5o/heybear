@@ -4,7 +4,7 @@ const app = require('./engine/heybear');
 require('dotenv').config();
 
 // init analytics
-let usercount = 1;
+let usercount = 0;
 let userlist = [];
 
 // init port
@@ -63,24 +63,25 @@ const io = require('socket.io')(server, {
   });
 
 io.on('connection', (socket) => {
-    console.log('new user connected');
+    console.log(`Client ${socket.id} connected`);
 
     socket.on('joining msg', (username) => {
-        username = "Anon" + usercount;
-        socket.nickname = username;
-        userlist.push(username);
+        // username = "Anon" + usercount;
+        // socket.nickname = username;
+        // userlist.push(username);
         usercount++;
-        io.emit('chat message', `---${socket.nickname} joined the chat---`);
+        io.emit('chat message', `---${socket.id} joined the chat---`);
         io.emit('chat message', `There are ${usercount} users in the chat`);
-        io.emit('chat message', `Users: ${userlist}`);  
+        // io.emit('chat message', `Users: ${userlist}`);
     });
     
     socket.on('disconnect', () => {
-        if (!socket.nickname) return;
-        userlist.splice(userlist.indexOf(socket.nickname), 1);
+        // if (!socket.nickname) return;
+        // userlist.splice(userlist.indexOf(socket.nickname), 1);
         usercount--;
-        console.log('user disconnected');
-        io.emit('chat message', `---${socket.nickname} left the chat---`);    
+        console.log(`Client ${socket.id} disconnected`);
+        io.emit('chat message', `---${socket.id} left the chat---`);
+        io.emit('chat message', `There are ${usercount} users in the chat`);  
     });
 
     socket.on('chat message', (msg) => {
